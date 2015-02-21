@@ -4,6 +4,7 @@ import threading
 from .lib.requests import requests
 from .src.stations import stations
 from .src.abbreviations import abbreviations
+from .src.Route import Route
 from xml.etree import ElementTree
 
 bsa_url = 'http://api.bart.gov/api/bsa.aspx'
@@ -17,7 +18,7 @@ class ScheduleCommand(sublime_plugin.WindowCommand):
         self.origin = None
         self.destination = None
         self.choose_station(self.on_origin_choosen)
-        # threading.Thread(target=self.get_schedules).start()
+        self.routes = []
 
     def on_origin_choosen(self, index):
         if index is -1:
@@ -47,14 +48,34 @@ class ScheduleCommand(sublime_plugin.WindowCommand):
     def handle_route_plan_response(self, response):
         root = ElementTree.fromstring(response)
         schedule = root.find('schedule')
-        print(schedule)
         trips = schedule.find('request').findall('trip')
-        print(trips)
+        routes = []
         for trip in trips:
-            print(trip.attrib)
-            for child in trip:
-                print(child)
-                print(child.attrib)
+            routes.append(Route(trip.attrib, trip.findall('leg')))
+
+        self.routes = routes
+        sublime.set_timeout(
+            lambda: self.show_routes(), 10
+        )
+
+    def show_routes(self):
+        route_descriptions = list(map(
+            lambda route: route.short_description(), self.routes
+        ))
+        self.window.show_quick_panel(route_descriptions, self.on_route_choosen)
+
+    def on_route_choosen(self, index):
+        if index is -1:
+            return
+        route = self.routes[index]
+        if route.has_transfer():
+            legs = route.long_description()
+            sublime.set_timeout(
+                lambda: self.window.show_quick_panel(legs, self.noop)
+            )
+
+    def noop(self, index):
+        return
 
     def get_schedules(self):
         res = requests.get(sched_url)

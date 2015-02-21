@@ -1,5 +1,4 @@
 abbreviations = [
-    'Abbr',
     '12th',
     '16th',
     '19th',

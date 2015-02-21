@@ -1,5 +1,4 @@
 stations = [
-    'Station Name',
     '12th St. Oakland City Center',
     '16th St. Mission (SF)',
     '19th St. Oakland',
