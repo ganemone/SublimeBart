@@ -5,7 +5,7 @@ from xml.etree import ElementTree
 from .lib.requests import requests
 from .src.stations import stations, abbreviations
 from .src.Route import Route
-from .src.PluginUtils import get_pref
+from .src.PluginUtils import get_pref, set_settings
 
 bsa_url = 'http://api.bart.gov/api/bsa.aspx'
 sched_url = 'http://api.bart.gov/api/sched.aspx'
@@ -108,6 +108,20 @@ class RoutePlanner():
             sublime.set_timeout(
                 lambda: self.window.show_quick_panel(legs, noop)
             )
+
+
+class ChangeSettingsCommand(sublime_plugin.WindowCommand):
+
+    def run(self, key):
+        self.key = key
+        self.choose_station(self.on_station_choosen)
+
+    def on_station_choosen(self, index):
+        if index >= 0:
+            set_settings(self.key, abbreviations[index])
+
+    def choose_station(self, callback):
+        self.window.show_quick_panel(stations, callback)
 
 
 def noop(self, index):

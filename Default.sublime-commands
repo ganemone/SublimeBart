@@ -10,5 +10,19 @@
   {
     "caption": "BART Go To Work",
     "command": "go_to_work"
+  },
+  {
+    "caption": "BART: Set Home Station",
+    "command": "change_settings",
+    "args": {
+      "key": "home"
+    }
+  },
+  {
+    "caption": "BART: Set Work Station",
+    "command": "change_settings",
+    "args": {
+      "key": "work"
+    }
   }
 ]
