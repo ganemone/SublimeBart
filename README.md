@@ -9,9 +9,15 @@ Integrates with the BART api to allow you to check real time BART arrival and de
 
 ## Usage
 Type 'ctrl+shift+p' and type BART to search for the available commands.
-1. Get Schedule: Prompts the user for an origin and destination. Shows a popup of the next 4 routes from the selected origin and destination. If the route includes transfers, the user may select the row in the list for a more detailed list of each transfer.
-2. Go Home: Same as Get Schedule, but skips the prompting process, and uses the users preferences for work and home.
-3. Go To Work: Same as Go Home but origin and destination are switched.
+
+1. `Get Schedule`
+Prompts the user for an origin and destination. Shows a popup of the next 4 routes from the selected origin and destination. If the route includes transfers, the user may select the row in the list for a more detailed list of each transfer.
+
+2. `Go Home`
+Same as Get Schedule, but skips the prompting process, and uses the users preferences for work and home.
+
+3. `Go To Work`
+Same as Go Home but origin and destination are switched.
 
 ## Options
 
