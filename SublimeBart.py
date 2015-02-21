@@ -2,8 +2,7 @@ import sublime
 import sublime_plugin
 import threading
 from .lib.requests import requests
-from .src.stations import stations
-from .src.abbreviations import abbreviations
+from .src.stations import stations, abbreviations
 from .src.Route import Route
 from xml.etree import ElementTree
 

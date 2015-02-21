@@ -1,4 +1,4 @@
-from .station_map import station_map
+from .stations import station_map
 
 
 class Route:
