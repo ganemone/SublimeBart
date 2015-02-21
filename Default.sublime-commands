@@ -2,5 +2,13 @@
   {
     "caption": "BART: Get Schedule",
     "command": "schedule"
+  },
+  {
+    "caption": "BART: Go Home",
+    "command": "go_home"
+  },
+  {
+    "caption": "BART Go To Work",
+    "command": "go_to_work"
   }
 ]

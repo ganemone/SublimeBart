@@ -1,10 +1,11 @@
 import sublime
 import sublime_plugin
 import threading
+from xml.etree import ElementTree
 from .lib.requests import requests
 from .src.stations import stations, abbreviations
 from .src.Route import Route
-from xml.etree import ElementTree
+from .src.PluginUtils import get_pref
 
 bsa_url = 'http://api.bart.gov/api/bsa.aspx'
 sched_url = 'http://api.bart.gov/api/sched.aspx'
@@ -33,7 +34,38 @@ class ScheduleCommand(sublime_plugin.WindowCommand):
             return None
 
         self.destination = abbreviations[index]
-        threading.Thread(target=self.get_route_plan).start()
+        planner = RoutePlanner(self.window, self.origin, self.destination)
+        threading.Thread(target=planner.get_route_plan).start()
+
+    def choose_station(self, callback):
+        self.window.show_quick_panel(stations, callback)
+
+
+class GoHomeCommand(sublime_plugin.WindowCommand):
+
+    def run(self):
+        home = get_pref('home')
+        work = get_pref('work')
+        planner = RoutePlanner(self.window, work, home)
+        threading.Thread(target=planner.get_route_plan).start()
+
+
+class GoToWorkCommand(sublime_plugin.WindowCommand):
+
+    def run(self):
+        home = get_pref('home')
+        work = get_pref('work')
+        planner = RoutePlanner(self.window, home, work)
+        threading.Thread(target=planner.get_route_plan).start()
+
+
+class RoutePlanner():
+
+    def __init__(self, window, origin, destination):
+        self.routes = []
+        self.window = window
+        self.origin = origin
+        self.destination = destination
 
     def get_route_plan(self):
         params = self.get_params_with_key({
@@ -63,6 +95,10 @@ class ScheduleCommand(sublime_plugin.WindowCommand):
         ))
         self.window.show_quick_panel(route_descriptions, self.on_route_choosen)
 
+    def get_params_with_key(self, params):
+        params['key'] = 'MW9S-E7SL-26DU-VV8V'
+        return params
+
     def on_route_choosen(self, index):
         if index is -1:
             return
@@ -70,19 +106,9 @@ class ScheduleCommand(sublime_plugin.WindowCommand):
         if route.has_transfer():
             legs = route.long_description()
             sublime.set_timeout(
-                lambda: self.window.show_quick_panel(legs, self.noop)
+                lambda: self.window.show_quick_panel(legs, noop)
             )
 
-    def noop(self, index):
-        return
 
-    def get_schedules(self):
-        res = requests.get(sched_url)
-        sublime.message_dialog(res.text)
-
-    def get_params_with_key(self, params):
-        params['key'] = 'MW9S-E7SL-26DU-VV8V'
-        return params
-
-    def choose_station(self, callback):
-        self.window.show_quick_panel(stations, callback)
+def noop(self, index):
+    return
