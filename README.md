@@ -19,6 +19,14 @@ Same as Get Schedule, but skips the prompting process, and uses the users prefer
 3. `Go To Work`
 Same as Go Home but origin and destination are switched.
 
+4. `Set Home Station`
+Allows user to choose home station from list of stations, and updates the preferences file.
+
+5. `Set Work Station`
+Allows user to choose work station from list of stations, and updates the preferences file.
+
+NOTE: Commands 4 and 5 currently will only work if the user SublimeBart.sublime-settings file is not open.
+
 ## Options
 
 `SublimeBart` exposes two useful options: home, and work. These are available under `Preferences -> Package Settings -> Sublime Bart` or search for `SublimeBart: Set plugin options`
