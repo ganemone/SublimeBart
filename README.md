@@ -1,4 +1,6 @@
-# SublimeBart - A Sublime Text Integration for
+# SublimeBart
+## Get real time BART arrival and departure data directly from sublime text
+
 #### [Sublime Text](http://www.sublimetext.com/)
 #### [BART](http://www.bart.gov/)
 
