@@ -2,8 +2,8 @@ import sublime
 import sublime_plugin
 import threading
 from .lib.requests import requests
-from .sublime_bart.stations import stations
-from .sublime_bart.abbreviations import abbreviations
+from .src.stations import stations
+from .src.abbreviations import abbreviations
 from xml.etree import ElementTree
 
 bsa_url = 'http://api.bart.gov/api/bsa.aspx'
@@ -42,12 +42,19 @@ class ScheduleCommand(sublime_plugin.WindowCommand):
             'dest': self.destination
         })
         res = requests.get(sched_url, params=params)
-        sublime.set_timeout(
-            lambda: self.handle_route_plan_response(res.text)
-        )
+        self.handle_route_plan_response(res.text)
 
     def handle_route_plan_response(self, response):
-        sublime.message_dialog(response)
+        root = ElementTree.fromstring(response)
+        schedule = root.find('schedule')
+        print(schedule)
+        trips = schedule.find('request').findall('trip')
+        print(trips)
+        for trip in trips:
+            print(trip.attrib)
+            for child in trip:
+                print(child)
+                print(child.attrib)
 
     def get_schedules(self):
         res = requests.get(sched_url)
