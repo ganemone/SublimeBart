@@ -13,14 +13,23 @@ api_key = 'MW9S-E7SL-26DU-VV8V'
 
 
 class ScheduleCommand(sublime_plugin.WindowCommand):
+    """Sublime Window Command which prompts the user for an
+    origin and destination BART station, requests real
+    time departure and arrival information from the BART API
+    and displays it to the user"""
 
     def run(self):
+        """Called when the command is executed.  Runs the command"""
         self.origin = None
         self.destination = None
         self.choose_station(self.on_origin_choosen)
         self.routes = []
 
     def on_origin_choosen(self, index):
+        """Callback for when the originating station is choosen.
+        Sets self.origin and prompts the user for the destination
+        station"""
+
         if index is -1:
             return None
 
@@ -30,6 +39,10 @@ class ScheduleCommand(sublime_plugin.WindowCommand):
         )
 
     def on_destination_choosen(self, index):
+        """Callback for when the destination station is choosen.
+        Sets self.destination and makes the BART API request on
+        a new thread"""
+
         if index is -1:
             return None
 
@@ -38,12 +51,17 @@ class ScheduleCommand(sublime_plugin.WindowCommand):
         threading.Thread(target=planner.get_route_plan).start()
 
     def choose_station(self, callback):
+        """Propmts the user for a BART station"""
         self.window.show_quick_panel(stations, callback)
 
 
 class GoHomeCommand(sublime_plugin.WindowCommand):
+    """Sublime Window Command which requests real time arrival
+    and departure information from the BART API for the saved home
+    and work stations and displays it to the user"""
 
     def run(self):
+        """Called when the command is executed. Runs the command"""
         home = get_pref('home')
         work = get_pref('work')
         planner = RoutePlanner(self.window, work, home)
@@ -51,8 +69,10 @@ class GoHomeCommand(sublime_plugin.WindowCommand):
 
 
 class GoToWorkCommand(sublime_plugin.WindowCommand):
+    """Same as GoHomeCommand but with origin and destination switched"""
 
     def run(self):
+        """Called when the command is executed. Runs the command"""
         home = get_pref('home')
         work = get_pref('work')
         planner = RoutePlanner(self.window, home, work)
@@ -60,6 +80,9 @@ class GoToWorkCommand(sublime_plugin.WindowCommand):
 
 
 class RoutePlanner():
+    """Helper class for planning routes. Handles requesting the BART API
+    based on an origin and destination station. Additionally parses the
+    resulting xml response."""
 
     def __init__(self, window, origin, destination):
         self.routes = []
@@ -111,6 +134,8 @@ class RoutePlanner():
 
 
 class ChangeSettingsCommand(sublime_plugin.WindowCommand):
+    """Sublime Window Command for setting the default home
+    and work stations."""
 
     def run(self, key):
         self.key = key
